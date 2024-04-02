@@ -34,10 +34,10 @@ Follow these steps to download the dataset:
 Next, run the `prepare_dataset.py` script, which concatenates the (as of this writing, 60,173) text files into fewer larger files so that they can be more efficiently transferred and accessed:
 
 ```
-prepare_dataset.py \
-  --data_dir "gutenberg/data" \
+python prepare_dataset.py \
+  --data_dir gutenberg/data \
   --max_size_mb 500 \
-  --output_dir "gutenberg_preprocessed"
+  --output_dir gutenberg_preprocessed
 ```
 
 > [!TIP] 
@@ -53,7 +53,7 @@ prepare_dataset.py \
 You can run the pretraining script as follows. Note that the additional command line arguments are shown with the default values for illustration purposes:
 
 ```bash
-pretraining_simple.py \
+python pretraining_simple.py \
   --data_dir "gutenberg_preprocessed" \
   --n_epochs 1 \
   --batch_size 4 \
@@ -118,4 +118,5 @@ Note that this code focuses on keeping things simple and minimal for educational
 5. Add a more advanced logger (for example, Weights and Biases) to view the loss and validation curves live
 6. Add distributed data parallelism (DDP) and train the model on multiple GPUs (see section *A.9.3 Training with multiple GPUs* in appendix A; [DDP-script.py](../../appendix-A/03_main-chapter-code/DDP-script.py)).
 7. Swap the from scratch `MultiheadAttention` class in the `previous_chapter.py` script with the efficient `MHAPyTorchScaledDotProduct` class implemented in the [Efficient Multi-Head Attention Implementations](../../ch03/02_bonus_efficient-multihead-attention/mha-implementations.ipynb) bonus section, which uses Flash Attention via PyTorch's `nn.functional.scaled_dot_product_attention` function.
-
+8. Speeding up the training by optimizing the model via [torch.compile](https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html) (`model = torch.compile`) or [thunder](https://github.com/Lightning-AI/lightning-thunder) (`model = thunder.jit(model)`).
+9. Implement Gradient Low-Rank Projection (GaLore) to further speed up the pretraining process. This can be achieved by just replacing the `AdamW` optimizer with the provided `GaLoreAdamW` provided in the [GaLore Python library](https://github.com/jiaweizzhao/GaLore).
